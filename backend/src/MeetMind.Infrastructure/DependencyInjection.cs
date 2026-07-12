@@ -4,6 +4,7 @@ using MeetMind.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Pgvector.EntityFrameworkCore;
 
 namespace MeetMind.Infrastructure;
 
@@ -16,7 +17,11 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly("MeetMind.Infrastructure")));
+                b =>
+                {
+                    b.MigrationsAssembly("MeetMind.Infrastructure");
+                    b.UseVector();
+                }));
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();

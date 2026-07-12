@@ -28,3 +28,19 @@ dotnet run --project src/MeetMind.API
 - Keep domain logic in `MeetMind.Domain` / `MeetMind.Application`.
 - Add new packages with explicit versions compatible with `net9.0`.
 - Frontend uses Tailwind CSS utility classes and Zustand for state.
+
+## Migrations
+
+`dotnet-ef` is installed as a local tool. Restore it before use:
+
+```bash
+cd backend
+dotnet tool restore
+```
+
+Create/update migrations:
+
+```bash
+dotnet ef migrations add <Name> --project src/MeetMind.Infrastructure --startup-project src/MeetMind.API --output-dir Data/Migrations
+dotnet ef database update --project src/MeetMind.Infrastructure --startup-project src/MeetMind.API
+```

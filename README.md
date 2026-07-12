@@ -42,6 +42,28 @@ MeetMind/
 - Node.js 20+
 - PostgreSQL 16 with pgvector (or Docker)
 
+### Database
+
+Start PostgreSQL + pgvector:
+
+```bash
+docker-compose up -d
+```
+
+Apply EF Core migrations:
+
+```bash
+cd backend
+dotnet tool restore
+dotnet ef database update --project src/MeetMind.Infrastructure --startup-project src/MeetMind.API
+```
+
+Create a new migration after model changes:
+
+```bash
+dotnet ef migrations add <Name> --project src/MeetMind.Infrastructure --startup-project src/MeetMind.API --output-dir Data/Migrations
+```
+
 ### Backend
 
 ```bash
