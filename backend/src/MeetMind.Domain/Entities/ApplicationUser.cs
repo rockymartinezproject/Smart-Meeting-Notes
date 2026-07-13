@@ -8,6 +8,8 @@ public class ApplicationUser : IdentityUser<Guid>
     public int? PlanId { get; set; }
     public Plan? Plan { get; set; }
     public Guid? PersonalTeamId { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiry { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Meeting> Meetings { get; set; } = new List<Meeting>();

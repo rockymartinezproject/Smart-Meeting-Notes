@@ -4,19 +4,25 @@ import type { User } from '../types'
 interface AuthState {
   user: User | null
   token: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
   setAuth: (user: User, token: string) => void
   logout: () => void
+  setLoading: (loading: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
+  isAuthenticated: false,
+  isLoading: true,
   setAuth: (user, token) => {
     localStorage.setItem('accessToken', token)
-    set({ user, token })
+    set({ user, token, isAuthenticated: true, isLoading: false })
   },
   logout: () => {
     localStorage.removeItem('accessToken')
-    set({ user: null, token: null })
+    set({ user: null, token: null, isAuthenticated: false, isLoading: false })
   },
+  setLoading: (loading) => set({ isLoading: loading }),
 }))
