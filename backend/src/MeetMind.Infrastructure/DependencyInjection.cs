@@ -3,6 +3,7 @@ using MeetMind.Domain.Entities;
 using MeetMind.Domain.Interfaces;
 using MeetMind.Infrastructure.Data;
 using MeetMind.Infrastructure.Identity;
+using MeetMind.Infrastructure.Background;
 using MeetMind.Infrastructure.Repositories;
 using MeetMind.Infrastructure.Services;
 using MeetMind.Infrastructure.Storage;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pgvector.EntityFrameworkCore;
 
@@ -47,6 +49,10 @@ public static class DependencyInjection
 
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IMeetingRepository, MeetingRepository>();
+
+        services.Configure<WhisperTranscriptionOptions>(configuration.GetSection("OpenAI"));
+        services.AddScoped<ITranscriptionService, WhisperTranscriptionService>();
+        services.AddHostedService<MeetingProcessingService>();
 
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
         var storageOptions = configuration.GetSection(StorageOptions.SectionName).Get<StorageOptions>() ?? new StorageOptions();

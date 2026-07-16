@@ -1,5 +1,6 @@
 using MediatR;
 using MeetMind.Application.Features.Meetings.Commands;
+using MeetMind.Application.Features.Meetings.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,13 @@ public class MeetingsController : ControllerBase
     public MeetingsController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyMeetings()
+    {
+        var meetings = await _mediator.Send(new GetMyMeetingsQuery());
+        return Ok(meetings);
     }
 
     [HttpPost("upload")]
