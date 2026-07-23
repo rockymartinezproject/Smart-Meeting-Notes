@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace MeetMind.API.Controllers;
 
@@ -6,14 +7,34 @@ namespace MeetMind.API.Controllers;
 [Route("api/[controller]")]
 public class HealthController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult Get()
+    private readonly HealthCheckService _healthCheckService;
+
+    public HealthController(HealthCheckService healthCheckService)
     {
-        return Ok(new
+        _healthCheckService = healthCheckService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
+    {
+        var report = await _healthCheckService.CheckHealthAsync(cancellationToken);
+
+        var response = new
         {
-            status = "Healthy",
+            status = report.Status.ToString(),
             service = "MeetMind.API",
-            timestamp = DateTime.UtcNow
-        });
+            timestamp = DateTime.UtcNow,
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description,
+                duration = e.Value.Duration
+            })
+        };
+
+        return report.Status == HealthStatus.Healthy
+            ? Ok(response)
+            : StatusCode(StatusCodes.Status503ServiceUnavailable, response);
     }
 }

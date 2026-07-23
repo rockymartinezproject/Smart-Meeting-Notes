@@ -32,6 +32,9 @@ public static class DependencyInjection
                     b.UseVector();
                 }));
 
+        services.AddHealthChecks()
+            .AddDbContextCheck<ApplicationDbContext>("database");
+
         services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
         {
             options.Password.RequireDigit = true;
